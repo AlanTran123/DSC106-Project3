@@ -116,98 +116,35 @@
 
             <h3>Motivation</h3>
             <p>
-                When talks of climate change are mentioned, metrics of the
-                average increasing by 1 to 2 degrees Celsius are used. The
-                problem with this is nobody actually lives in the global
-                average, so we wanted to see how much the projected warming
-                changes from continent to continent and how much this is
-                dependent on the emissions path. For each region, the chart
-                puts a low-emissions and a high-emissions scenario on the
-                same axes, so you can see the gap between them directly.
-                Under SSP1-2.6. Under SSP5-8.5 it is seen that every region
-                is warmed up by about 3 degrees Celsius by 2100.
+                When talks of climate change are mentioned, metrics of the average increasing by 1 to 2 degrees celsius are used. The problem with this is nobody actually lives in the global average, so we wanted to see how much the projected warming changes from continent to continent and how much this is dependent on the emissions path. For each region, the chart puts a low-emissions and a high-emissions scenario on the same axes, so you can see the gap between them directly. Under SSP1-2.6. Under SSP5-8.5 it is seen that every region is warmed up by about 3 degrees celsius by 2100.
             </p>
 
             <h3>Data and Processing</h3>
             <p>
-                Our data comes from CMIP6 climate model runs, which we
-                accessed through NOAA's public CMIP6 repository on Google
-                Cloud. We used near-surface air temperature (tas) for two
-                future scenarios, SSP1-2.6 (low emissions) and SSP5-8.5
-                (high emissions), from 2015 to 2100.
+                Our data comes from CMIP6 climate model runs, which we accessed through NOAA’s public CMIP6 repository on Google Cloud. We used near-surface air temperature (tas) for two future scenarios, SSP1-2.6 (low emissions) and SSP5-8.5 (high emissions), from 2015 to 2100.
             </p>
             <p>
-                To get the raw data to output the chart we had to define the
-                regions. Each continent is a latitude/longitude box, and we
-                averaged all the grid cells inside of it.
+                To get the raw data to output the chart we had to define the regions, each continent is a latitude/longitutde box then averaged all the grid cells inside of it.
             </p>
             <p>
-                We also needed yearly values, so we averaged temperatures
-                into one value per year, per region, and per scenario. We
-                then converted each region and scenario to temperature
-                change by subtracting the average temperature of the first
-                20 years (2015-2034). This means the y-axis shows warming
-                compared to roughly today, not to pre-industrial times.
+                We had to also get yearly values so we averaged temperatures into one value per year and per region and scenario. We also converted the temperature change for each region and scenario. To do this we subtracted the avg. temp. From the first 20 years (2015-2034). This means the y-axis shows warming compared to roughly today not to pre-industrial times.
             </p>
             <p>
-                The ups and downs from year to year are due to natural
-                variability in the model, not errors, because we didn't
-                smooth the data. Also, since this all comes from a single
-                climate model, it shows one possible future, not a forecast
-                with a range of uncertainty.
+                The ups and downs from year to year are due to natural variability in the model, not errors because we didn’t smooth the data. Also since this all comes from a single climate model it shows one possible future not a forecast with a range of uncertainty.
             </p>
 
-            <h3>Design Rationale</h3>
-
-            <h4>Visual Encoding</h4>
+            <h3>Visual Encoding</h3>
             <ul>
-                <li>
-                    <strong>Position for time and temperature:</strong> We
-                    placed time (year) along the x-axis and temperature
-                    change along the y-axis. Position provides the most
-                    effective visual channel for precise human comparison,
-                    while a continuous line chart effectively reflects
-                    sequential time data.
-                </li>
-                <li>
-                    <strong>Color for scenario:</strong> To distinguish the
-                    two scenarios, distinct hues were selected rather than a
-                    continuous color gradient. Blue denotes low emissions and
-                    orange denotes high emissions, aligning with intuitive
-                    "cool vs. warm" associations. Furthermore, a
-                    blue-and-orange palette improves accessibility for
-                    color-blind viewers relative to red and green.
-                </li>
-                <li>
-                    <strong>Dashed zero line:</strong> A horizontal dashed
-                    line at 0°C establishes the "no change from baseline"
-                    reference point, enabling immediate visual assessment of
-                    temperatures relative to present levels.
-                </li>
+                <li><strong>Position for time and temperature:</strong> We placed time (year) along the x-axis and temperature change along the y-axis. Position provides the most effective visual channel for precise human comparison, while a continuous line chart effectively reflects sequential time data.</li>
+                <li><strong>Color for scenario:</strong> To distinguish the two scenarios, distinct hues were selected rather than a continuous color gradient. Blue denotes low emissions and orange denotes high emissions, aligning with intuitive "cool vs. warm" associations. Furthermore, a blue-and-orange palette improves accessibility for color-blind viewers relative to red and green.</li>
+                <li><strong>Dashed zero line:</strong> A horizontal dashed line at 0°C establishes the "no change from baseline" reference point, enabling immediate visual assessment of temperatures relative to present levels.</li>
             </ul>
 
-            <h4>Interaction</h4>
+            <h3>Interaction</h3>
             <ul>
-                <li>
-                    <strong>Region dropdown (dynamic query):</strong> Showing
-                    all six regions with both scenarios at once would mean
-                    twelve overlapping lines, which was too hard to read. The
-                    dropdown lets you look at one region at a time and
-                    compare its two scenarios directly.
-                </li>
-                <li>
-                    <strong>Animated transitions:</strong> When you switch
-                    regions, the lines and axes slide to their new positions
-                    instead of redrawing from scratch. That makes it easier
-                    to see how the new region compares to the one you were
-                    just looking at.
-                </li>
-                <li>
-                    <strong>Tooltips (details on demand):</strong> Hovering
-                    over a point shows the exact year, scenario, and
-                    temperature change. That way we didn't have to label
-                    every value, and the chart stays clean.
-                </li>
+                <li><strong>Region dropdown (dynamic query).</strong> Showing all six regions with both scenarios at once would mean twelve overlapping lines, which was too hard to read. The dropdown lets you look at one region at a time and compare its two scenarios directly.</li>
+                <li><strong>Animated transitions.</strong> When you switch regions, the lines and axes slide to their new positions instead of redrawing from scratch. That makes it easier to see how the new region compares to the one you were just looking at.</li>
+                <li><strong>Tooltips (details on demand).</strong> Hovering over a point shows the exact year, scenario, and temperature change. That way we didn’t have to label every value and the chart stays clean.</li>
             </ul>
 
             <!-- TODO: add "Development Process" subsection (division of work,
