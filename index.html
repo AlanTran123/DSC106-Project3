@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -44,8 +45,10 @@
             </span>
 
             <div class="region-buttons" role="group" aria-labelledby="region-label">
-                <button type="button" class="region-button active" data-region="North America" aria-pressed="true">North America</button>
-                <button type="button" class="region-button" data-region="South America" aria-pressed="false">South America</button>
+                <button type="button" class="region-button active" data-region="North America" aria-pressed="true">North
+                    America</button>
+                <button type="button" class="region-button" data-region="South America" aria-pressed="false">South
+                    America</button>
                 <button type="button" class="region-button" data-region="Europe" aria-pressed="false">Europe</button>
                 <button type="button" class="region-button" data-region="Africa" aria-pressed="false">Africa</button>
                 <button type="button" class="region-button" data-region="Asia" aria-pressed="false">Asia</button>
@@ -81,10 +84,10 @@
                     SSP5-8.5 — High Emissions
                 </div>
 
-            <div class="legend-item" id="compare-legend" hidden>
-                <span class="legend-line ghost-swatch"></span>
-                Dashed lines: <span class="compare-region"></span>
-            </div>
+                <div class="legend-item" id="compare-legend" hidden>
+                    <span class="legend-line ghost-swatch"></span>
+                    Dashed lines: <span class="compare-region"></span>
+                </div>
 
             </div>
 
@@ -108,50 +111,123 @@
 
             <h3>Motivation</h3>
             <p>
-                When climate change is being discussed, people often describe the warming as an increase in the global average temperature by 1 to 2 degrees Celsius. The problem with this is that nobody lives in this global average temperature. We only feel the temperature of the area we live in. Therefore, we're interested in investigating how much the warming projection changes from continent to continent to get a feel for what people will actually feel if climate change continues.
+                When climate change is being discussed, people often describe the warming as an increase in the
+                global average temperature by 1 to 2 degrees Celsius. The problem with this is that nobody lives in
+                this global average temperature. We only feel the temperature of the area we live in. So we wanted
+                to see how much the warming projection changes from continent to continent, to get a feel for what
+                people will actually experience if climate change continues.
             </p>
 
             <p>
-                For each region, both low-emissions and high-emissions scenarios are displayed for comparison. This allows us to easily spot how the gap between the two scenarios changes from continent to continent as we switch between the graphs of different regions. Under SSP1-2.6 (the low emissions scenario), warming stays within about 1 degree of the baseline, which is defined as the average projected temperature of the years 2015 - 2034 (first 20 years of the data). Under SSP5-8.5 (high emissions scenario), the regions warm by about 2.5 to 4 degrees Celsius by 2100.
+                For each region, the graph shows both the low-emissions and high-emissions scenarios for comparison.
+                This allows the user to easily spot how the gap between the two scenarios changes from continent to
+                continent as the user switches between the graphs of different regions. Under SSP1-2.6 (the
+                low-emissions scenario), warming stays within about 1 degree of the baseline, which is defined as
+                the average projected temperature of the years 2015–2034 (the first 20 years of the data). Under
+                SSP5-8.5 (the high-emissions scenario), the regions warm by about 2.5 to 4 degrees Celsius by 2100.
             </p>
 
             <h3>Data and Processing</h3>
             <p>
-                Our data comes from CMIP6 climate model runs, which we accessed through NOAA’s public CMIP6 repository on Google Cloud. We used near-surface air temperature (tas) for two future scenarios, SSP1-2.6 (low emissions) and SSP5-8.5 (high emissions), from 2015 to 2100.
+                Our data comes from CMIP6 climate model runs, which we accessed through NOAA’s public CMIP6
+                repository on Google Cloud. We used near-surface air temperature (tas) for two future scenarios,
+                SSP1-2.6 (low emissions) and SSP5-8.5 (high emissions), from 2015 to 2100.
             </p>
 
             <p>
-                To aggregate data into regions, we defined each continent as a latitude/longitude box and averaged all the grid cells inside the box. To aggregate them into yearly values for the graph, we averaged temperatures into one value per year per region per scenario. To show changes relative to baseline, we subtracted the average temperature of the first 20 years (2015 - 2034), which is our baseline, from the data. This makes the graph show changes relative to roughly today's temperature, not the pre-industrial temperature commonly used elsewhere. We think this is more intuitive as readers can directly see how much hotter relative to today the Earth will become, instead of a pre-industrial temperature they feel no connection to.
+                To aggregate data into regions, we defined each continent as a latitude/longitude box and averaged
+                all the grid cells inside the box. Then, to get yearly values for the graph, we averaged
+                temperatures into one value per year per region per scenario. To show changes relative to the
+                baseline, we subtracted the average temperature of the first 20 years (2015–2034), which is our
+                baseline, from the data. This makes the graph show changes relative to roughly today's temperature,
+                not the pre-industrial temperature commonly used elsewhere. We think this is more intuitive because
+                the user can directly see how much hotter the Earth will become compared to today, instead of
+                compared to a pre-industrial temperature they feel no connection to.
             </p>
 
             <h3>Visual Encoding</h3>
             <ul>
-                <li><strong>Position for time and temperatures:</strong> We put time (year) on the x-axis and temperature change on the y-axis. This encodes time and temperature changes with position, which is the most effective visual channel for precise comparison. A continuous line chart is appropriate for sequential and continuous data to see how values change over time.</li>
-                <li><strong>Fixed color for scenario:</strong> We used two distinct colors to separate the high-emissions from the low-emissions scenarios. We used orange for high-emissions and blue for low-emissions, which aligns with the intuition about warm and cold colors. We chose this over a continuous color gradient because the value itself is already encoded with position, making a color gradient redundant and even more confusing without any benefit.</li>
-                <li><strong>Dashed zero line:</strong> The y=0 line is shown as a horizontal dashed line, which shows no change from the baseline average. This makes it easier to compare changes with the reference point.</li>
-                <li><strong>Fixed y-axis:</strong> The y-axis stays the same across the graphs for different regions so that they're directly comparable.</li>
+                <li><strong>Position for time and temperatures:</strong> We put time (year) on the x-axis and
+                    temperature change on the y-axis. This encodes time and temperature changes with position, which is
+                    the most effective visual channel for precise comparison. A continuous line graph is appropriate for
+                    sequential and continuous data to see how values change over time.</li>
+                <li><strong>Fixed color for scenario:</strong> We used two distinct colors to separate the
+                    high-emissions from the low-emissions scenarios. We used orange for high-emissions and blue for
+                    low-emissions, which aligns with the intuition about warm and cold colors. We chose this over a
+                    continuous color gradient because the value itself is already encoded with position, making a color
+                    gradient redundant and even more confusing without any benefit.</li>
+                <li><strong>Dashed zero line:</strong> The y=0 line is shown as a horizontal dashed line, which shows no
+                    change from the baseline average. This makes it easier to compare changes with the reference
+                    point.</li>
+                <li><strong>Fixed y-axis:</strong> The y-axis stays the same across the graphs for different regions so
+                    that they're directly comparable.</li>
             </ul>
 
             <h3>Interaction</h3>
             <ul>
-                <li><strong>Region buttons (dynamic query):</strong> If we show all six regions on the same graph, there will be twelve total lines, which is hard to read. The buttons let the user pick a specific region and show the graph for that region only. The user can compare different regions by switching between the graphs of both regions, where the fixed y-axis ensures comparisons are accurate.</li>
-                <li><strong>Animated transitions:</strong> When the user switches regions, the lines slide to their new positions instead of instantly appearing at their new location. This makes it easier to see how the data changed and how the trend moved between two graphs.</li>
-                <li><strong>Tooltips (details on demand):</strong> When the user moves the cursor over the graph, a tooltip shows the year at the cursor and the temperature change of both scenarios at the same time. The user does not need to hover exactly on a line, because the graph reads where the cursor is horizontally. A faint dashed vertical line and two highlighted points (white fill with a colored outline) show which year is selected. This way we don't need to label every value, and the graph stays clean.</li>
+                <li><strong>Region buttons (dynamic query):</strong> If we showed all six regions on the same graph,
+                    there would be twelve lines in total, which would be hard to read. The buttons let the user pick a
+                    specific region and show the graph for that region only. The user can compare different regions by
+                    switching between the graphs of both regions, where the fixed y-axis ensures comparisons are
+                    accurate.</li>
+                <li><strong>Compare button:</strong> We added a compare button which pins the region the user currently
+                    selected to the background and allows the user to select a different region to show on top. When the
+                    button is clicked, the current region is grayed out to prompt the user to pick a different region.
+                    When they do, the original region lines turn transparent and dashed while the new region is shown
+                    normally. The tooltip shows both regions' values.</li>
+                <li><strong>Animated transitions:</strong> When the user switches regions, the lines slide to their new
+                    positions instead of instantly appearing at their new location. This makes it easier to see how the
+                    data changed and how the trend moved between two graphs.</li>
+                <li><strong>Tooltips (details on demand):</strong> When the user hovers over the graph, a vertical gray
+                    dashed line appears over the graph to show the cursor position. The point where this line crosses
+                    each scenario's line is highlighted with a white dot outlined in that scenario's color, with the
+                    values of both scenarios shown in the tooltip. This makes it easier to compare both scenarios and
+                    avoid having to aim the cursor precisely onto the point to show tooltip.</li>
             </ul>
 
-            <h3>Alternatives Considered</h3>
+            <h3>Alternatives Considered and Design Changes</h3>
             <p>
-                We found all of these problems by actually using our graph after we built it.
+                After actually trying out the graph ourselves, we made the following changes:
             </p>
+
             <ul>
-                <li><strong>Y-axis:</strong> At first we allowed the y-axis to vary based on the data, but then we realized that this made it difficult to compare between graphs because the y-axis kept changing and the trends looked the same even though the values were completely different. To ensure the graphs are actually comparable, we fixed the y-axis to a specific range that can cover all the data we have and allow for fair comparison.</li>
-                <li><strong>Tooltip:</strong> At first, the tooltip only showed up when the cursor was on a single point and showed one scenario at a time. We found out this was hard to aim because the points are small, and hard to compare because we had to hover over both points again and again. So we changed it to show one tooltip for both scenarios whenever the cursor is in the graph.</li>
-                <li><strong>Region selector:</strong> At first we used a dropdown to pick the region. We found out the dropdown list covers the graph when it opens, and the user has to click twice to switch regions. Since there are only six regions, we changed to one button for each region, so all the regions are always visible and switching takes one click.</li>
+                <li><strong>Y-axis:</strong> At first we allowed the y-axis to vary based on the data. We realized this
+                    made it difficult to compare between graphs because the y-axis kept changing and the trends looked
+                    the same even though the values were completely different. To ensure the graphs are actually
+                    comparable, we fixed the y-axis to a specific range that can cover all the data we have and allow
+                    for fair comparison.</li>
+                <li><strong>Tooltip:</strong> At first, the tooltip only showed up when the cursor was on a single point
+                    and showed one scenario at a time. We found out this was hard to aim because the points are small,
+                    and hard to compare because we had to hover over both points again and again. So we changed it to
+                    show one tooltip for both scenarios whenever the cursor is in the graph.</li>
+                <li><strong>Region selector:</strong> At first we used a dropdown to pick the region. We found out the
+                    dropdown list covers the graph when it opens, and the user has to click twice to switch regions.
+                    Since there are only six regions, we changed to one button for each region. This way, all regions
+                    can be selected easily with a button click.</li>
+                <li><strong>Compare feature:</strong> At first, the compare feature showed the last region selected as
+                    faint lines behind the current region. We found this confusing when the user switches between
+                    regions because the background region kept changing every time a different region was selected. It
+                    is hard to interpret what's going on and what is being compared against, so we redesigned the
+                    compare button to pin the initially selected region as the background instead.</li>
             </ul>
+
+            <p>
+                We also considered other interaction techniques, such as zooming, brushing, and selecting, but we
+                decided not to implement them. We could not think of a reason for the user to zoom into a specific
+                range of years. For brushing or selecting, we could show something like a best-fit line for the
+                selected years, but this still does not add much value. Our goal is to compare regions, so we
+                focused on implementing the features that actually make comparison easier.
+            </p>
 
             <h3>Development Process</h3>
             <p>
-                Alan built the visualization. This included loading the data and making the interactive visualization with D3. Dariy wrote the first version of the writeup, which covers our motivation, how we processed the data, and why we chose our visual encodings and interactions. Flyson rewrote the writeup for consistent tone and ease of understanding, and wrote the development process section. Flyson also tested the graph by using it, found problems with the y-axis and the tooltip, and improved both. Edmond also revised and polished the writeup. In total, we spent about 14 people-hours on the project. The visualization took the most time, because we had to download and process the data first.
+                Alan downloaded and processed the data and built the initial interactive visualization with D3.
+                Dariy wrote the first version of the writeup, which covers our motivation, how we processed the
+                data, and why we chose our visual encodings and interactions. Flyson tested the graph and improved
+                the y-axis, tooltip interaction, region selection, and comparison mechanism, then rewrote the
+                writeup for consistency and wrote the development process section. Edmond also revised and polished
+                the writeup. In total, we spent about 14 people-hours on the project. The visualization took the
+                most time, because we had to download and process the data first.
             </p>
 
         </section>
@@ -165,4 +241,5 @@
     <script src="script.js"></script>
 
 </body>
+
 </html>
