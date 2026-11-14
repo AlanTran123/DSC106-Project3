@@ -114,6 +114,48 @@ h1 {
     outline-offset: 2px;
 }
 
+.compare-button {
+    padding: 9px 14px;
+
+    font-size: 15px;
+    font-family: inherit;
+
+    color: #1f2937;
+
+    border: 1px dashed #6b7280;
+    border-radius: 6px;
+
+    background: white;
+
+    cursor: pointer;
+}
+
+.compare-button:hover:not(:disabled) {
+    background: #e5e7eb;
+}
+
+.compare-button:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+.compare-hint {
+    flex-basis: 100%;
+
+    margin: 0;
+
+    font-size: 14px;
+
+    color: #4b5563;
+}
+
+.compare-button.active {
+    color: white;
+
+    background: #4b5563;
+    border: 1px solid #4b5563;
+}
+
 .region-button:disabled,
 .region-button.pinned {
     color: #9ca3af;
@@ -209,6 +251,13 @@ svg {
 }
 
 
+.ghost-line {
+    stroke-width: 2;
+    stroke-dasharray: 6, 4;
+    opacity: 0.5;
+}
+
+
 /* ------------------------------
    LEGEND
 ------------------------------ */
@@ -236,6 +285,17 @@ svg {
     height: 4px;
 
     border-radius: 2px;
+}
+
+.legend-item[hidden] {
+    display: none;
+}
+
+.legend-line.ghost-swatch {
+    height: 0;
+
+    border-top: 3px dashed #6b7280;
+    background: none;
 }
 
 .legend-line.low {

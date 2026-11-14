@@ -150,6 +150,11 @@ const COLORS = {
 let lowByYear = new Map();
 let highByYear = new Map();
 
+// Rows of the region we compare with (empty when compare is off)
+let ghostLowByYear = new Map();
+let ghostHighByYear = new Map();
+let ghostRegion = null;
+
 
 const hoverGroup = chart
     .append("g")
@@ -182,6 +187,27 @@ const hoverHigh = hoverGroup
     .attr("fill", "white")
     .attr("stroke", COLORS.high)
     .attr("stroke-width", 3);
+
+
+// Highlight points on the compared (dashed) region
+const hoverGhostLow = hoverGroup
+    .append("circle")
+    .attr("r", 5)
+    .attr("fill", "white")
+    .attr("stroke", COLORS.low)
+    .attr("stroke-width", 2.5)
+    .attr("stroke-opacity", 0.6)
+    .style("display", "none");
+
+
+const hoverGhostHigh = hoverGroup
+    .append("circle")
+    .attr("r", 5)
+    .attr("fill", "white")
+    .attr("stroke", COLORS.high)
+    .attr("stroke-width", 2.5)
+    .attr("stroke-opacity", 0.6)
+    .style("display", "none");
 
 
 // Invisible rectangle over the plot area that listens for the mouse
@@ -258,6 +284,37 @@ function onHoverMove(event) {
         .attr("cx", x)
         .attr("cy", yScale(high.temp_change_c));
 
+    const ghostLow = ghostLowByYear.get(year);
+    const ghostHigh = ghostHighByYear.get(year);
+    const showGhost = ghostRegion && ghostLow && ghostHigh;
+
+    hoverGhostLow
+        .style("display", showGhost ? null : "none");
+
+    hoverGhostHigh
+        .style("display", showGhost ? null : "none");
+
+    let ghostHtml = "";
+
+    if (showGhost) {
+
+        hoverGhostLow
+            .attr("cx", x)
+            .attr("cy", yScale(ghostLow.temp_change_c));
+
+        hoverGhostHigh
+            .attr("cx", x)
+            .attr("cy", yScale(ghostHigh.temp_change_c));
+
+        ghostHtml = `
+            <div style="margin-top: 8px;">
+                <strong>${ghostRegion} (pinned, dashed lines)</strong><br>
+                ${tooltipRow(ghostHigh, COLORS.high)}<br>
+                ${tooltipRow(ghostLow, COLORS.low)}
+            </div>
+        `;
+    }
+
     tooltip
         .style("display", "block")
         .html(`
@@ -265,6 +322,7 @@ function onHoverMove(event) {
             Year: ${year}<br>
             ${tooltipRow(high, COLORS.high)}<br>
             ${tooltipRow(low, COLORS.low)}
+            ${ghostHtml}
         `);
 
     // Keep the tooltip inside the window
@@ -314,36 +372,88 @@ d3.csv(
 
     // Initial chart
     const regionButtons = d3.selectAll(".region-button");
+    const compareButton = d3.select("#compare-toggle");
+    const compareHint = d3.select("#compare-hint");
+    const compareLegend = d3.select("#compare-legend");
 
+    // Normal mode: one region (currentRegion)
+    // Compare mode: pinnedRegion stays fixed as dashed lines behind,
+    //               pickedRegion is the solid one in front
     let currentRegion = "North America";
+    let compareOn = false;
+    let pinnedRegion = null;
+    let pickedRegion = null;
 
-    function selectRegion(region, animate) {
+    function refresh(animate) {
 
-        currentRegion = region;
+        // Before a second region is picked, the pinned region stays solid
+        const foreground =
+            compareOn
+                ? (pickedRegion !== null ? pickedRegion : pinnedRegion)
+                : currentRegion;
+
+        const background =
+            compareOn && pickedRegion !== null
+                ? pinnedRegion
+                : null;
 
         updateChart(
             data,
-            region,
-            animate
+            foreground,
+            animate,
+            background
         );
 
-        // Show which button is selected
-        regionButtons
-            .classed(
-                "active",
-                function () {
-                    return this.dataset.region === region;
-                }
-            )
-            .attr(
-                "aria-pressed",
-                function () {
-                    return this.dataset.region === region;
-                }
+        // Region buttons: selected, or pinned (grayed out)
+        regionButtons.each(function () {
+
+            const region = this.dataset.region;
+
+            const isPinned =
+                compareOn && region === pinnedRegion;
+
+            const isSelected =
+                compareOn
+                    ? region === pickedRegion
+                    : region === currentRegion;
+
+            d3.select(this)
+                .classed("active", isSelected)
+                .classed("pinned", isPinned)
+                .property("disabled", isPinned)
+                .attr("aria-pressed", isSelected || isPinned)
+                .attr(
+                    "title",
+                    isPinned ? "Pinned for comparison" : null
+                );
+        });
+
+        compareButton
+            .classed("active", compareOn)
+            .attr("aria-pressed", compareOn)
+            .text(
+                compareOn
+                    ? "Stop comparing"
+                    : "Compare with another region"
             );
+
+        compareHint
+            .property("hidden", !compareOn)
+            .text(
+                !compareOn
+                    ? ""
+                    : pickedRegion === null
+                        ? `${pinnedRegion} is pinned. Pick a different region to compare with it.`
+                        : `${pinnedRegion} is pinned (dashed lines). Solid lines show ${pickedRegion}. Pick another region to change the solid lines.`
+            );
+
+        compareLegend
+            .property("hidden", background === null)
+            .select(".compare-region")
+            .text(background || "");
     }
 
-    selectRegion(currentRegion, false);
+    refresh(false);
 
 
     // ========================================================
@@ -355,9 +465,54 @@ d3.csv(
         const selectedRegion =
             this.dataset.region;
 
-        if (selectedRegion === currentRegion) return;
+        if (compareOn) {
 
-        selectRegion(selectedRegion, true);
+            if (
+                selectedRegion === pinnedRegion ||
+                selectedRegion === pickedRegion
+            ) return;
+
+            pickedRegion = selectedRegion;
+
+        } else {
+
+            if (selectedRegion === currentRegion) return;
+
+            currentRegion = selectedRegion;
+        }
+
+        refresh(true);
+
+    });
+
+
+    // ========================================================
+    // COMPARE BUTTON
+    // ========================================================
+
+    compareButton.on("click", function () {
+
+        if (!compareOn) {
+
+            // Pin the region on screen
+            compareOn = true;
+            pinnedRegion = currentRegion;
+            pickedRegion = null;
+
+        } else {
+
+            // Keep the solid region on screen and remove the pin
+            compareOn = false;
+
+            if (pickedRegion !== null) {
+                currentRegion = pickedRegion;
+            }
+
+            pinnedRegion = null;
+            pickedRegion = null;
+        }
+
+        refresh(true);
 
     });
 
@@ -385,7 +540,8 @@ d3.csv(
 function updateChart(
     data,
     region,
-    animate = true
+    animate = true,
+    compareRegion = null
 ) {
 
     // --------------------------------------------------------
@@ -422,7 +578,9 @@ function updateChart(
     d3
         .select("#chart-title")
         .text(
-            `Projected Temperature Change — ${region}`
+            compareRegion
+                ? `Projected Temperature Change — ${region} vs ${compareRegion}`
+                : `Projected Temperature Change — ${region}`
         );
 
 
@@ -528,6 +686,60 @@ function updateChart(
         "high-line",
         animate
     );
+
+
+    // --------------------------------------------------------
+    // COMPARE REGION (dashed lines behind the current region)
+    // --------------------------------------------------------
+
+    ghostRegion = compareRegion;
+
+    if (compareRegion) {
+
+        const ghostData = data.filter(
+            d => d.region === compareRegion
+        );
+
+        const ghostLow = ghostData
+            .filter(d => d.scenario === "ssp126")
+            .sort((a, b) => a.year - b.year);
+
+        const ghostHigh = ghostData
+            .filter(d => d.scenario === "ssp585")
+            .sort((a, b) => a.year - b.year);
+
+        // Only animate if the dashed lines were already on the graph
+        const hadGhost = !chart
+            .select(".scenario-ghost-low")
+            .empty();
+
+        drawScenarioLine(
+            ghostLow,
+            "ghost-low",
+            "low-line ghost-line",
+            animate && hadGhost
+        );
+
+        drawScenarioLine(
+            ghostHigh,
+            "ghost-high",
+            "high-line ghost-line",
+            animate && hadGhost
+        );
+
+        // Keep the dashed lines behind the current lines
+        chart.selectAll(".ghost-line").lower();
+
+        ghostLowByYear = new Map(ghostLow.map(d => [d.year, d]));
+        ghostHighByYear = new Map(ghostHigh.map(d => [d.year, d]));
+
+    } else {
+
+        chart.selectAll(".ghost-line").remove();
+
+        ghostLowByYear = new Map();
+        ghostHighByYear = new Map();
+    }
 
 
     // --------------------------------------------------------
