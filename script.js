@@ -138,6 +138,151 @@ const tooltip = d3.select("#tooltip");
 
 
 // ============================================================
+// HOVER: one tooltip for both scenarios, guide line, highlights
+// ============================================================
+
+const COLORS = {
+    low: "#2563eb",
+    high: "#f97316"
+};
+
+// Rows of the selected region, looked up by year
+let lowByYear = new Map();
+let highByYear = new Map();
+
+
+const hoverGroup = chart
+    .append("g")
+    .attr("class", "hover-group")
+    .style("display", "none")
+    .style("pointer-events", "none");
+
+
+const hoverLine = hoverGroup
+    .append("line")
+    .attr("y1", 0)
+    .attr("y2", innerHeight)
+    .attr("stroke", "#6b7280")
+    .attr("stroke-opacity", 0.5)
+    .attr("stroke-width", 1)
+    .attr("stroke-dasharray", "4,4");
+
+
+const hoverLow = hoverGroup
+    .append("circle")
+    .attr("r", 6)
+    .attr("fill", "white")
+    .attr("stroke", COLORS.low)
+    .attr("stroke-width", 3);
+
+
+const hoverHigh = hoverGroup
+    .append("circle")
+    .attr("r", 6)
+    .attr("fill", "white")
+    .attr("stroke", COLORS.high)
+    .attr("stroke-width", 3);
+
+
+// Invisible rectangle over the plot area that listens for the mouse
+const hoverArea = chart
+    .append("rect")
+    .attr("class", "hover-area")
+    .attr("width", innerWidth)
+    .attr("height", innerHeight)
+    .attr("fill", "transparent")
+    .style("cursor", "crosshair")
+    .on("mousemove", onHoverMove)
+    .on("mouseleave", hideHover);
+
+
+function hideHover() {
+    hoverGroup.style("display", "none");
+    tooltip.style("display", "none");
+}
+
+
+function formatChange(value) {
+    return `${value >= 0 ? "+" : ""}${value.toFixed(2)} °C`;
+}
+
+
+function tooltipRow(row, color) {
+    return `
+        <span style="
+            display: inline-block;
+            width: 11px;
+            height: 11px;
+            box-sizing: border-box;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid ${color};
+            margin-right: 6px;
+        "></span>${row.scenario_label}:
+        ${formatChange(row.temp_change_c)}
+    `;
+}
+
+
+function onHoverMove(event) {
+
+    if (lowByYear.size === 0) return;
+
+    // Read the cursor position horizontally and snap to the nearest year
+    const [mouseX] = d3.pointer(event, this);
+    const [minYear, maxYear] = xScale.domain();
+
+    const year = Math.max(
+        minYear,
+        Math.min(maxYear, Math.round(xScale.invert(mouseX)))
+    );
+
+    const low = lowByYear.get(year);
+    const high = highByYear.get(year);
+
+    if (!low || !high) return;
+
+    const x = xScale(year);
+
+    hoverGroup.style("display", null);
+
+    hoverLine
+        .attr("x1", x)
+        .attr("x2", x);
+
+    hoverLow
+        .attr("cx", x)
+        .attr("cy", yScale(low.temp_change_c));
+
+    hoverHigh
+        .attr("cx", x)
+        .attr("cy", yScale(high.temp_change_c));
+
+    tooltip
+        .style("display", "block")
+        .html(`
+            <strong>${low.region}</strong><br>
+            Year: ${year}<br>
+            ${tooltipRow(high, COLORS.high)}<br>
+            ${tooltipRow(low, COLORS.low)}
+        `);
+
+    // Keep the tooltip inside the window
+    const tooltipWidth = tooltip.node().offsetWidth;
+    const rightEdge = document.documentElement.clientWidth - 10;
+
+    let left = event.pageX + 15;
+    if (left + tooltipWidth > rightEdge) {
+        left = event.pageX - tooltipWidth - 15;
+    }
+
+    tooltip
+        .style("left", `${left}px`)
+        .style("top", `${event.pageY - 20}px`);
+}
+
+
+// ============================================================
 // LOAD CSV
 // ============================================================
 
@@ -364,93 +509,17 @@ function updateChart(
 
 
     // --------------------------------------------------------
-    // HOVER POINTS
+    // HOVER DATA
     // --------------------------------------------------------
 
-    const allPoints =
-        regionData;
+    lowByYear = new Map(lowData.map(d => [d.year, d]));
+    highByYear = new Map(highData.map(d => [d.year, d]));
 
+    hideHover();
 
-    const circles = chart
-        .selectAll(".hover-point")
-        .data(
-            allPoints,
-            d =>
-                `${d.scenario}-${d.year}`
-        );
-
-
-    circles.exit().remove();
-
-
-    circles
-        .enter()
-        .append("circle")
-        .attr(
-            "class",
-            "hover-point"
-        )
-        .attr("r", 7)
-        .attr("fill", "transparent")
-        .merge(circles)
-        .attr(
-            "cx",
-            d => xScale(d.year)
-        )
-        .attr(
-            "cy",
-            d =>
-                yScale(
-                    d.temp_change_c
-                )
-        )
-        .on(
-            "mouseover",
-            function (event, d) {
-
-                tooltip
-                    .style(
-                        "display",
-                        "block"
-                    )
-                    .html(`
-                        <strong>${d.region}</strong><br>
-                        Year: ${d.year}<br>
-                        ${d.scenario_label}<br>
-                        Change:
-                        ${d.temp_change_c.toFixed(2)} °C
-                    `);
-
-            }
-        )
-        .on(
-            "mousemove",
-            function (event) {
-
-                tooltip
-                    .style(
-                        "left",
-                        `${event.pageX + 15}px`
-                    )
-                    .style(
-                        "top",
-                        `${event.pageY - 20}px`
-                    );
-
-            }
-        )
-        .on(
-            "mouseout",
-            function () {
-
-                tooltip
-                    .style(
-                        "display",
-                        "none"
-                    );
-
-            }
-        );
+    // Keep the hover layers on top of the lines
+    hoverGroup.raise();
+    hoverArea.raise();
 
 }
 
