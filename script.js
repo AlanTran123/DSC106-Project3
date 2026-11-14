@@ -12,6 +12,10 @@ const margin = {
 const width = 1000;
 const height = 560;
 
+// Fixed y-axis range (°C). Data runs from about -1.13 to 4.07.
+const Y_MIN = -1.5;
+const Y_MAX = 4.5;
+
 const innerWidth =
     width - margin.left - margin.right;
 
@@ -267,23 +271,8 @@ function updateChart(
     );
 
 
-    const yExtent = d3.extent(
-        regionData,
-        d => d.temp_change_c
-    );
-
-
-    const padding = 0.4;
-
-
-    yScale.domain([
-        Math.min(
-            yExtent[0] - padding,
-            -0.5
-        ),
-
-        yExtent[1] + padding
-    ]);
+    // Fixed y-axis so every region uses the same scale
+    yScale.domain([Y_MIN, Y_MAX]);
 
 
     // --------------------------------------------------------
