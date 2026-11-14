@@ -116,41 +116,40 @@
 
             <h3>Motivation</h3>
             <p>
-                When talks of climate change are mentioned, metrics of the average increasing by 1 to 2 degrees celsius are used. The problem with this is nobody actually lives in the global average, so we wanted to see how much the projected warming changes from continent to continent and how much this is dependent on the emissions path. For each region, the chart puts a low-emissions and a high-emissions scenario on the same axes, so you can see the gap between them directly. Under SSP1-2.6. Under SSP5-8.5 it is seen that every region is warmed up by about 3 degrees celsius by 2100.
+                When climate change is being discussed, people often describe the warming as an increase in the global average temperature by 1 to 2 degrees Celsius. The problem with this is that nobody lives in this global average temperature. We only feel the temperature of the area we live in. Therefore, we're interested in investigating how much the warming projection changes from continent to continent to get a feel for what people will actually feel if climate change continues.
+            </p>
+
+            <p>
+                For each region, both low-emissions and high-emissions scenarios are displayed for comparison. This allows us to easily spot how the gap between the two scenarios changes from continent to continent as we switch between the graphs of different regions. Under SSP1-2.6 (the low emissions scenario), warming stays within about 1 degree of the baseline, which is defined as the average projected temperature of the years 2015 - 2034 (first 20 years of the data). Under SSP5-8.5 (high emissions scenario), the regions warm by about 2.5 to 4 degrees Celsius by 2100.
             </p>
 
             <h3>Data and Processing</h3>
             <p>
                 Our data comes from CMIP6 climate model runs, which we accessed through NOAA’s public CMIP6 repository on Google Cloud. We used near-surface air temperature (tas) for two future scenarios, SSP1-2.6 (low emissions) and SSP5-8.5 (high emissions), from 2015 to 2100.
             </p>
+
             <p>
-                To get the raw data to output the chart we had to define the regions, each continent is a latitude/longitutde box then averaged all the grid cells inside of it.
-            </p>
-            <p>
-                We had to also get yearly values so we averaged temperatures into one value per year and per region and scenario. We also converted the temperature change for each region and scenario. To do this we subtracted the avg. temp. From the first 20 years (2015-2034). This means the y-axis shows warming compared to roughly today not to pre-industrial times.
-            </p>
-            <p>
-                The ups and downs from year to year are due to natural variability in the model, not errors because we didn’t smooth the data. Also since this all comes from a single climate model it shows one possible future not a forecast with a range of uncertainty.
+                To aggregate data into regions, we defined each continent as a latitude/longitude box and averaged all the grid cells inside the box. To aggregate them into yearly values for the graph, we averaged temperatures into one value per year per region per scenario. To show changes relative to baseline, we subtracted the average temperature of the first 20 years (2015 - 2034), which is our baseline, from the data. This makes the graph show changes relative to roughly today's temperature, not the pre-industrial temperature commonly used elsewhere. We think this is more intuitive as readers can directly see how much hotter relative to today the Earth will become, instead of a pre-industrial temperature they feel no connection to.
             </p>
 
             <h3>Visual Encoding</h3>
             <ul>
-                <li><strong>Position for time and temperature:</strong> We placed time (year) along the x-axis and temperature change along the y-axis. Position provides the most effective visual channel for precise human comparison, while a continuous line chart effectively reflects sequential time data.</li>
-                <li><strong>Color for scenario:</strong> To distinguish the two scenarios, distinct hues were selected rather than a continuous color gradient. Blue denotes low emissions and orange denotes high emissions, aligning with intuitive "cool vs. warm" associations. Furthermore, a blue-and-orange palette improves accessibility for color-blind viewers relative to red and green.</li>
-                <li><strong>Dashed zero line:</strong> A horizontal dashed line at 0°C establishes the "no change from baseline" reference point, enabling immediate visual assessment of temperatures relative to present levels.</li>
+                <li><strong>Position for time and temperatures:</strong> We put time (year) on the x-axis and temperature change on the y-axis. This encodes time and temperature changes with position, which is the most effective visual channel for precise comparison. A continuous line chart is appropriate for sequential and continuous data to see how values change over time.</li>
+                <li><strong>Fixed color for scenario:</strong> We used two distinct colors to separate the high-emissions from the low-emissions scenarios. We used orange for high-emissions and blue for low-emissions, which aligns with the intuition about warm and cold colors. We chose this over a continuous color gradient because the value itself is already encoded with position, making a color gradient redundant and even more confusing without any benefit.</li>
+                <li><strong>Dashed zero line:</strong> The y=0 line is shown as a horizontal dashed line, which shows no change from the baseline average. This makes it easier to compare changes with the reference point.</li>
                 <li><strong>Fixed y-axis:</strong> The y-axis stays the same across the graphs for different regions so that they're directly comparable. At first we allowed the y-axis to vary based on the data, but then we realized that this made it difficult to compare between graphs because the y-axis kept changing and the trends looked the same even though the values were completely different. To ensure the graphs are actually comparable, we fixed the y-axis to a specific range that can cover all the data we have and allow for fair comparison.</li>
             </ul>
 
             <h3>Interaction</h3>
             <ul>
-                <li><strong>Region dropdown (dynamic query).</strong> Showing all six regions with both scenarios at once would mean twelve overlapping lines, which was too hard to read. The dropdown lets you look at one region at a time and compare its two scenarios directly.</li>
-                <li><strong>Animated transitions.</strong> When you switch regions, the lines and axes slide to their new positions instead of redrawing from scratch. That makes it easier to see how the new region compares to the one you were just looking at.</li>
-                <li><strong>Tooltips (details on demand).</strong> Hovering over a point shows the exact year, scenario, and temperature change. That way we didn’t have to label every value and the chart stays clean.</li>
+                <li><strong>Region dropdown (dynamic query):</strong> If we show all six regions on the same graph, there will be twelve total lines, which is hard to read. The dropdown lets the user pick a specific region and show the graph for that region only. The user can compare different regions by switching between the graphs of both regions, where the fixed y-axis ensures comparisons are accurate.</li>
+                <li><strong>Animated transitions:</strong> When the user switches regions, the lines slide to their new positions instead of instantly appearing at their new location. This makes it easier to see how the data changed and how the trend moved between two graphs.</li>
+                <li><strong>Tooltips (details on demand):</strong> When the user hovers over a point, the graph shows the exact year, scenario, and temperature change. This way we don't need to label every value, and the graph stays clean.</li>
             </ul>
 
             <h3>Development Process</h3>
             <p>
-                Alan built the visualization. This included loading the data and making the interactive visualization with D3. Dariy wrote the first version of the writeup, which covers our motivation, how we processed the data, and why we chose our visual encodings and interactions. Flyson revised the writeup and wrote the development process section. Edmond also revised and polished the writeup. In total, we spent about 12 people-hours on the project. The visualization took the most time, because we had to download and process the data first.
+                Alan built the visualization. This included loading the data and making the interactive visualization with D3. Dariy wrote the first version of the writeup, which covers our motivation, how we processed the data, and why we chose our visual encodings and interactions. Flyson revised the writeup and wrote the development process section. Flyson also made slight adjustments to the graph to improve it. Edmond also revised and polished the writeup. In total, we spent about 12 people-hours on the project. The visualization took the most time, because we had to download and process the data first.
             </p>
 
         </section>
