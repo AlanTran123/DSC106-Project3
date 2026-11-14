@@ -313,31 +313,53 @@ d3.csv(
     );
 
     // Initial chart
-    updateChart(
-        data,
-        "North America",
-        false
-    );
+    const regionButtons = d3.selectAll(".region-button");
 
+    let currentRegion = "North America";
 
-    // ========================================================
-    // REGION DROPDOWN
-    // ========================================================
+    function selectRegion(region, animate) {
 
-    d3
-        .select("#region-select")
-        .on("change", function () {
+        currentRegion = region;
 
-            const selectedRegion =
-                this.value;
+        updateChart(
+            data,
+            region,
+            animate
+        );
 
-            updateChart(
-                data,
-                selectedRegion,
-                true
+        // Show which button is selected
+        regionButtons
+            .classed(
+                "active",
+                function () {
+                    return this.dataset.region === region;
+                }
+            )
+            .attr(
+                "aria-pressed",
+                function () {
+                    return this.dataset.region === region;
+                }
             );
+    }
 
-        });
+    selectRegion(currentRegion, false);
+
+
+    // ========================================================
+    // REGION BUTTONS
+    // ========================================================
+
+    regionButtons.on("click", function () {
+
+        const selectedRegion =
+            this.dataset.region;
+
+        if (selectedRegion === currentRegion) return;
+
+        selectRegion(selectedRegion, true);
+
+    });
 
 })
 .catch(error => {

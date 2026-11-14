@@ -39,37 +39,18 @@
 
         <section class="controls">
 
-            <label for="region-select">
+            <span class="controls-label" id="region-label">
                 Select Region:
-            </label>
+            </span>
 
-            <select id="region-select">
-
-                <option value="North America">
-                    North America
-                </option>
-
-                <option value="South America">
-                    South America
-                </option>
-
-                <option value="Europe">
-                    Europe
-                </option>
-
-                <option value="Africa">
-                    Africa
-                </option>
-
-                <option value="Asia">
-                    Asia
-                </option>
-
-                <option value="Oceania">
-                    Oceania
-                </option>
-
-            </select>
+            <div class="region-buttons" role="group" aria-labelledby="region-label">
+                <button type="button" class="region-button active" data-region="North America" aria-pressed="true">North America</button>
+                <button type="button" class="region-button" data-region="South America" aria-pressed="false">South America</button>
+                <button type="button" class="region-button" data-region="Europe" aria-pressed="false">Europe</button>
+                <button type="button" class="region-button" data-region="Africa" aria-pressed="false">Africa</button>
+                <button type="button" class="region-button" data-region="Asia" aria-pressed="false">Asia</button>
+                <button type="button" class="region-button" data-region="Oceania" aria-pressed="false">Oceania</button>
+            </div>
 
         </section>
 
@@ -142,18 +123,19 @@
 
             <h3>Interaction</h3>
             <ul>
-                <li><strong>Region dropdown (dynamic query):</strong> If we show all six regions on the same graph, there will be twelve total lines, which is hard to read. The dropdown lets the user pick a specific region and show the graph for that region only. The user can compare different regions by switching between the graphs of both regions, where the fixed y-axis ensures comparisons are accurate.</li>
+                <li><strong>Region buttons (dynamic query):</strong> If we show all six regions on the same graph, there will be twelve total lines, which is hard to read. The buttons let the user pick a specific region and show the graph for that region only. The user can compare different regions by switching between the graphs of both regions, where the fixed y-axis ensures comparisons are accurate.</li>
                 <li><strong>Animated transitions:</strong> When the user switches regions, the lines slide to their new positions instead of instantly appearing at their new location. This makes it easier to see how the data changed and how the trend moved between two graphs.</li>
                 <li><strong>Tooltips (details on demand):</strong> When the user moves the cursor over the graph, a tooltip shows the year at the cursor and the temperature change of both scenarios at the same time. The user does not need to hover exactly on a line, because the graph reads where the cursor is horizontally. A faint dashed vertical line and two highlighted points (white fill with a colored outline) show which year is selected. This way we don't need to label every value, and the graph stays clean.</li>
             </ul>
 
             <h3>Alternatives Considered</h3>
             <p>
-                We found both of these problems by actually using our graph after we built it.
+                We found all of these problems by actually using our graph after we built it.
             </p>
             <ul>
                 <li><strong>Y-axis:</strong> At first we allowed the y-axis to vary based on the data, but then we realized that this made it difficult to compare between graphs because the y-axis kept changing and the trends looked the same even though the values were completely different. To ensure the graphs are actually comparable, we fixed the y-axis to a specific range that can cover all the data we have and allow for fair comparison.</li>
                 <li><strong>Tooltip:</strong> At first, the tooltip only showed up when the cursor was on a single point and showed one scenario at a time. We found out this was hard to aim because the points are small, and hard to compare because we had to hover over both points again and again. So we changed it to show one tooltip for both scenarios whenever the cursor is in the graph.</li>
+                <li><strong>Region selector:</strong> At first we used a dropdown to pick the region. We found out the dropdown list covers the graph when it opens, and the user has to click twice to switch regions. Since there are only six regions, we changed to one button for each region, so all the regions are always visible and switching takes one click.</li>
             </ul>
 
             <h3>Development Process</h3>
