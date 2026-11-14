@@ -270,3 +270,39 @@ svg {
         gap: 10px;
     }
 }
+
+/* ------------------------------
+   WRITEUP
+------------------------------ */
+
+.writeup {
+    margin-top: 30px;
+
+    padding: 25px 30px;
+
+    background: white;
+
+    border-radius: 10px;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    line-height: 1.6;
+}
+
+.writeup h2 {
+    margin-top: 0;
+}
+
+.writeup h3 {
+    margin-top: 28px;
+    margin-bottom: 8px;
+}
+
+.writeup h4 {
+    margin-top: 18px;
+    margin-bottom: 6px;
+}
+
+.writeup li {
+    margin-bottom: 8px;
+}
